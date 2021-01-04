@@ -11,11 +11,9 @@ if os.path.exists("env.py"):
 
 app = Flask(__name__)
 
-
 app.config["MONGO_DBNAME"] = os.environ.get("MONGO_DBNAME")
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 app.secret_key = os.environ.get("SECRET_KEY")
-
 
 mongo = PyMongo(app)
 
@@ -108,8 +106,8 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/add_tasks", methods=["GET", "POST"])
-def add_tasks():
+@app.route("/add_task", methods=["GET", "POST"])
+def add_task():
     if request.method == "POST":
         is_urgent = "on" if request.form.get("is_urgent") else "off"
         task = {
@@ -125,11 +123,11 @@ def add_tasks():
         return redirect(url_for("get_tasks"))
 
     categories = mongo.db.categories.find().sort("category_name", 1)
-    return render_template("add_tasks.html", categories=categories)
+    return render_template("add_task.html", categories=categories)
 
 
 @app.route("/edit_task/<task_id>", methods=["GET", "POST"])
-def edit_tasks(task_id):
+def edit_task(task_id):
     if request.method == "POST":
         is_urgent = "on" if request.form.get("is_urgent") else "off"
         submit = {
@@ -145,7 +143,7 @@ def edit_tasks(task_id):
 
     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
     categories = mongo.db.categories.find().sort("category_name", 1)
-    return render_template("edit_tasks.html", task=task, categories=categories)
+    return render_template("edit_task.html", task=task, categories=categories)
 
 
 @app.route("/delete_task/<task_id>")
